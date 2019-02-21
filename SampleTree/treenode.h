@@ -1,6 +1,8 @@
 #ifndef TREENODE_H
 #define TREENODE_H
 
+#include <iostream>
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -27,8 +29,11 @@ public:
 
     void addChild(const TreeNode &child)
     {
-        int idx = findPlaceForNewChild(child);
-        m_children.insert(idx, child);
+        int idx = findPlaceForNewChild(child.getValue());
+        typename std::vector<std::shared_ptr<TreeNode>>::iterator it;
+        it = m_children.begin();
+        it += idx;
+        m_children.insert(it, std::make_shared<TreeNode>(child));
     }
 
     void changeObjectName(const std::string &name)
@@ -40,6 +45,11 @@ public:
             objectName = name + "_" + std::to_string(m_id);
     }
 
+    std::string getObjectName() const
+    {
+        return objectName;
+    }
+
     T getValue() const
     {
         return value;
@@ -48,6 +58,19 @@ public:
     void pointParent(const TreeNode &parent)
     {
         m_parent = parent;
+    }
+
+    void printChildren() const
+    {
+        if (m_children.empty())
+            std::cout << "This node doesn't have children!\n";
+
+        else
+        {
+            std::cout << "Children of node: " << objectName << std::endl;
+            for (int i = 0; i < m_children.size(); i++)
+                std::cout << "Object name: " << m_children[i] -> getObjectName() << ", value:" << m_children[i] -> getValue() << std::endl;
+        }
     }
 
     std::string serialize() const
@@ -76,7 +99,7 @@ private:
 
         for (idx = 0; idx < m_children.size(); idx++)
         {
-            if (val <= m_children[idx])
+            if (val <= m_children[idx] -> getValue())
                 break;
         }
 
@@ -86,7 +109,7 @@ private:
     static std::vector<std::string> m_objectNameList;
     static int m_nodesCounter;
     TreeNode *m_parent = nullptr;
-    std::vector<TreeNode*> m_children;
+    std::vector<std::shared_ptr<TreeNode>> m_children;
     int m_id;
     T value;
     std::string objectName;
