@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+//This should make our class to accept only arithmetic types.
 template <typename T,
           typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
 class TreeNode
@@ -20,6 +21,8 @@ public:
 
         else
             changeObjectName(name);
+
+        m_objectNameList.push_back(objectName);
     }
 
     void addChild(const TreeNode &child)
@@ -66,12 +69,18 @@ private:
 
     int findPlaceForNewChild(const T &val)
     {
-        int idx = 0;
-
         if (m_children.empty())
-            return idx;
+            return 0;
 
+        int idx;
 
+        for (idx = 0; idx < m_children.size(); idx++)
+        {
+            if (val <= m_children[idx])
+                break;
+        }
+
+        return idx;
     }
 
     static std::vector<std::string> m_objectNameList;

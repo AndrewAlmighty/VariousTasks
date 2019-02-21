@@ -1,0 +1,23 @@
+#include "mainwindow.h"
+#include <QApplication>
+#include <iostream>
+
+#include "treenode.h"
+
+int main(int argc, char *argv[])
+{
+    TreeNode<int> a1(3);
+    TreeNode<float> b(1.0);
+    TreeNode<double> c(3.2);
+    TreeNode<char> d('a');
+    TreeNode<int> e(5);
+    TreeNode<long> f(33);
+    TreeNode<char> g('d');
+    TreeNode<short> h(1);
+    a1.addChild(b);
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
+}
