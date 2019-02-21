@@ -25,15 +25,19 @@ public:
             changeObjectName(name);
 
         m_objectNameList.push_back(objectName);
+        std::cout << "Created node " << objectName << std::endl;
     }
 
-    void addChild(const TreeNode &child)
+    ~TreeNode()
     {
-        int idx = findPlaceForNewChild(child.getValue());
-        typename std::vector<std::shared_ptr<TreeNode>>::iterator it;
-        it = m_children.begin();
-        it += idx;
-        m_children.insert(it, std::make_shared<TreeNode>(child));
+        std::cout << "Destroyed node " << objectName << std::endl;
+    }
+
+    void addChild(std::shared_ptr<TreeNode<T>> &&child)
+    {
+        auto it = m_children.begin();
+        it += findPlaceForNewChild(child -> getValue());
+        m_children.insert(it, std::move(child));
     }
 
     void changeObjectName(const std::string &name)
@@ -57,7 +61,7 @@ public:
 
     void pointParent(const TreeNode &parent)
     {
-        m_parent = parent;
+        m_parent = std::make_shared<TreeNode>(parent);
     }
 
     void printChildren() const
@@ -68,7 +72,7 @@ public:
         else
         {
             std::cout << "Children of node: " << objectName << std::endl;
-            for (int i = 0; i < m_children.size(); i++)
+            for (unsigned i = 0; i < m_children.size(); i++)
                 std::cout << "Object name: " << m_children[i] -> getObjectName() << ", value:" << m_children[i] -> getValue() << std::endl;
         }
     }
@@ -90,12 +94,12 @@ private:
         return true;
     }
 
-    int findPlaceForNewChild(const T &val)
+    unsigned findPlaceForNewChild(const T &val)
     {
         if (m_children.empty())
             return 0;
 
-        int idx;
+        unsigned idx;
 
         for (idx = 0; idx < m_children.size(); idx++)
         {
@@ -108,7 +112,7 @@ private:
 
     static std::vector<std::string> m_objectNameList;
     static int m_nodesCounter;
-    TreeNode *m_parent = nullptr;
+    std::shared_ptr<TreeNode> m_parent;
     std::vector<std::shared_ptr<TreeNode>> m_children;
     int m_id;
     T value;
