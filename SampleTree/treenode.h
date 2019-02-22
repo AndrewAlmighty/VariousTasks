@@ -21,18 +21,18 @@ public:
         value = val;
 
         if (name.empty())
-            objectName = "Node_" + std::to_string(m_id);
+            objectName = "N_" + std::to_string(m_id);
 
         else
             changeObjectName(name);
 
         m_objectNameList.push_back(objectName);
-        std::cout << "Created node " << objectName << std::endl;
+      //  std::cout << "Created " << objectName << std::endl;
     }
 
     ~TreeNode()
     {
-        std::cout << "Destroyed node " << objectName << std::endl;
+      //  std::cout << "Destroyed " << objectName << std::endl;
     }
 
     void addChild(std::shared_ptr<TreeNode<T>> &&child)
