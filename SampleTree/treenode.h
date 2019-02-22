@@ -69,6 +69,22 @@ public:
         return nullptr;
     }
 
+    TreeNode* getChild(std::string name)
+    {
+        for (auto &node : m_children)
+        {
+            if (node -> getObjectName() == name)
+                return node.get();
+        }
+
+        return nullptr;
+    }
+
+    TreeNode* getParent() const
+    {
+        return m_parent;
+    }
+
     std::string getObjectName() const
     {
         return objectName;
@@ -111,6 +127,22 @@ public:
         return output;
     }
 
+    std::string serializeTree()
+    {
+        if (m_parent == nullptr && m_children.empty())
+            return "Node is not part of tree";
+
+        TreeNode *ptr = this;
+
+        while (ptr -> getParent() != nullptr)  
+            ptr = ptr -> getParent();
+
+        std::string output;
+        gatherInfoAboutTree(ptr, output);
+
+        return output;
+    }
+
 private:
     struct MyComparator
     {
@@ -119,6 +151,47 @@ private:
             return lhs -> getValue() <= rhs -> getValue();
         }
     };
+
+    void gatherInfoAboutTree(TreeNode* ptr, std::string &out)
+    {
+        out += "N:" + ptr -> getObjectName() + "(" + std::to_string(ptr -> getValue()) + ")P:";
+
+        if (ptr -> getParent() == nullptr)
+        {
+            out += "NULL,";
+        }
+
+        else
+        {
+            out += ptr -> getParent() -> getObjectName() + "(" + std::to_string(ptr -> getParent() -> getValue()) + "),";
+        }
+
+        if (ptr -> getNumberOfChildren() == 0)
+        {
+            out += "CH:NULL;";
+            return;
+        }
+
+        out += "CH:";
+        std::list<std::string> tmpNodeNames;
+        for (int i = 0; i < ptr -> getNumberOfChildren(); i++)
+        {
+            if (ptr -> getChild(i) != nullptr)
+            {
+                tmpNodeNames.push_back(ptr -> getChild(i) -> getObjectName());
+                out += ptr -> getChild(i) -> getObjectName() + "(" + std::to_string(ptr -> getChild(i) -> getValue()) + ")";
+            }
+        }
+
+        out += ";";
+
+        for (const std::string &name : tmpNodeNames)
+        {
+            ptr = ptr -> getChild(name);
+            gatherInfoAboutTree(ptr, out);
+            ptr = ptr -> getParent();
+        }
+    }
 
     bool isObjectNameUnique(std::string name) const
     {
