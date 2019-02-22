@@ -1,10 +1,11 @@
 #ifndef TREENODE_H
 #define TREENODE_H
 
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <set>
-#include <vector>
+#include <list>
 #include <string>
 
 //This should make our class to accept only arithmetic types.
@@ -92,16 +93,14 @@ private:
 
     bool isObjectNameUnique(std::string name) const
     {
-        for (unsigned i = 0; i < m_objectNameList.size(); i++)
-        {
-            if (name == m_objectNameList[i])
-                return false;
-        }
+        auto findIter = std::find(m_objectNameList.begin(), m_objectNameList.end(), name);
+        if (findIter != m_objectNameList.end())
+            return false;
 
         return true;
     }
 
-    static std::vector<std::string> m_objectNameList;
+    static std::list<std::string> m_objectNameList;
     static int m_nodesCounter;
   //  std::shared_ptr<TreeNode> m_parent;
     std::set<std::shared_ptr<TreeNode>, MyComparator> m_children;
@@ -114,6 +113,6 @@ template <typename T, typename T2>
 int TreeNode<T, T2>::m_nodesCounter = 0;
 
 template <typename T, typename T2>
-std::vector<std::string> TreeNode<T, T2>::m_objectNameList = {};
+std::list<std::string> TreeNode<T, T2>::m_objectNameList = {};
 
 #endif // TREENODE_H
