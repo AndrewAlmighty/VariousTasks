@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <set>
 #include <vector>
 #include <string>
 
@@ -35,9 +36,7 @@ public:
 
     void addChild(std::shared_ptr<TreeNode<T>> &&child)
     {
-        auto it = m_children.begin();
-        it += findPlaceForNewChild(child -> getValue());
-        m_children.insert(it, std::move(child));
+        m_children.insert(std::move(child));
     }
 
     void changeObjectName(const std::string &name)
@@ -59,10 +58,10 @@ public:
         return value;
     }
 
-    void pointParent(const TreeNode &parent)
-    {
-        m_parent = std::make_shared<TreeNode>(parent);
-    }
+  //  void pointParent(const TreeNode &parent)
+ //   {
+  //      m_parent = std::make_shared<TreeNode>(parent);
+  //  }
 
     void printChildren() const
     {
@@ -72,8 +71,8 @@ public:
         else
         {
             std::cout << "Children of node: " << objectName << std::endl;
-            for (unsigned i = 0; i < m_children.size(); i++)
-                std::cout << "Object name: " << m_children[i] -> getObjectName() << ", value:" << m_children[i] -> getValue() << std::endl;
+            for (const auto& node : m_children)
+                std::cout << "Object name: " << node -> getObjectName() << ", value:" << node -> getValue() << std::endl;
         }
     }
 
@@ -83,6 +82,14 @@ public:
     }
 
 private:
+    struct MyComparator
+    {
+        bool operator()(const std::shared_ptr<TreeNode> lhs, const std::shared_ptr<TreeNode> rhs)
+        {
+            return lhs -> getValue() < rhs -> getValue();
+        }
+    };
+
     bool isObjectNameUnique(std::string name) const
     {
         for (unsigned i = 0; i < m_objectNameList.size(); i++)
@@ -94,26 +101,10 @@ private:
         return true;
     }
 
-    unsigned findPlaceForNewChild(const T &val)
-    {
-        if (m_children.empty())
-            return 0;
-
-        unsigned idx;
-
-        for (idx = 0; idx < m_children.size(); idx++)
-        {
-            if (val <= m_children[idx] -> getValue())
-                break;
-        }
-
-        return idx;
-    }
-
     static std::vector<std::string> m_objectNameList;
     static int m_nodesCounter;
-    std::shared_ptr<TreeNode> m_parent;
-    std::vector<std::shared_ptr<TreeNode>> m_children;
+  //  std::shared_ptr<TreeNode> m_parent;
+    std::set<std::shared_ptr<TreeNode>, MyComparator> m_children;
     int m_id;
     T value;
     std::string objectName;
