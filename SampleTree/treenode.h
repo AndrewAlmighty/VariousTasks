@@ -37,6 +37,7 @@ public:
 
     void addChild(std::shared_ptr<TreeNode<T>> &&child)
     {
+        child -> pointParent(this);
         m_children.insert(std::move(child));
     }
 
@@ -49,6 +50,25 @@ public:
             objectName = name + "_" + std::to_string(m_id);
     }
 
+    int getNumberOfChildren() const
+    {
+        return m_children.size();
+    }
+
+    TreeNode* getChild(int idx)
+    {
+        int i = 0;
+        for (auto &node : m_children)
+        {
+            if (i == idx)
+                return node.get();
+
+            i++;
+        }
+
+        return nullptr;
+    }
+
     std::string getObjectName() const
     {
         return objectName;
@@ -59,27 +79,36 @@ public:
         return value;
     }
 
-  //  void pointParent(const TreeNode &parent)
- //   {
-  //      m_parent = std::make_shared<TreeNode>(parent);
-  //  }
-
-    void printChildren() const
+    void pointParent(TreeNode *parent)
     {
+        m_parent = parent;
+    }
+
+    std::string serializeNode() const
+    {
+        std::string output;
+        output = objectName + ":" + std::to_string(value);
+
+        if (m_parent == nullptr)
+            output += ",NoParent";
+
+        else
+            output += ",Parent:" + m_parent -> getObjectName() + ":" + std::to_string(m_parent -> value);
+
         if (m_children.empty())
-            std::cout << "This node doesn't have children!\n";
+            output += ",NoChildren";
 
         else
         {
-            std::cout << "Children of node: " << objectName << std::endl;
+            output += ",Children:";
             for (const auto& node : m_children)
-                std::cout << "Object name: " << node -> getObjectName() << ", value:" << node -> getValue() << std::endl;
-        }
-    }
+                output += node -> getObjectName() + ":" + std::to_string(node -> getValue()) + ",";
 
-    std::string serialize() const
-    {
-        return "";
+            output = output.substr(0, output.size() - 1); //remove last ','
+        }
+
+        output += ";";
+        return output;
     }
 
 private:
@@ -87,7 +116,7 @@ private:
     {
         bool operator()(const std::shared_ptr<TreeNode> lhs, const std::shared_ptr<TreeNode> rhs)
         {
-            return lhs -> getValue() < rhs -> getValue();
+            return lhs -> getValue() <= rhs -> getValue();
         }
     };
 
@@ -102,11 +131,11 @@ private:
 
     static std::list<std::string> m_objectNameList;
     static int m_nodesCounter;
-  //  std::shared_ptr<TreeNode> m_parent;
+    TreeNode* m_parent = nullptr;
     std::set<std::shared_ptr<TreeNode>, MyComparator> m_children;
     int m_id;
-    T value;
     std::string objectName;
+    T value;    
 };
 
 template <typename T, typename T2>
