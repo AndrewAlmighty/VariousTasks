@@ -20,7 +20,7 @@ public:
         m_nodesCounter++;
         value = val;
 
-        if (name.empty())
+        if (name.empty() || name == "NULL")
             objectName = "N_" + std::to_string(m_id);
 
         else
