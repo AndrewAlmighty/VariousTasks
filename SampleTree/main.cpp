@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "nodetester.h"
+#include "treenode.h"
 
 #include <QApplication>
 #include <iostream>
@@ -16,9 +17,27 @@ int main(int argc, char *argv[])
         }
     }
 
+    TreeNode<int> a1(1, "Root");
+    TreeNode<int>* ptr = nullptr;
+    a1.addChild(std::make_shared<TreeNode<int>>(1));
+    a1.addChild(std::make_shared<TreeNode<int>>(2));
+    a1.addChild(std::make_shared<TreeNode<int>>(3));
+
+    ptr = a1.getChild(0);
+    ptr -> addChild(std::make_shared<TreeNode<int>>(4));
+    ptr -> addChild(std::make_shared<TreeNode<int>>(5));
+
+    ptr = a1.getChild(1);
+    ptr -> addChild(std::make_shared<TreeNode<int>>(6));
+
+    ptr = a1.getChild(0);
+
+    ptr = ptr -> getChild(0);
+    ptr -> addChild(std::make_shared<TreeNode<int>>(7));
+
     QApplication a(argc, argv);
     MainWindow w;
-    w.acceptSerializedTree("N:GrandParent(1)P:NULL,CH:N_1(1)N_2(2)N_3(3);N:N_1(1)P:GrandParent(1),CH:N_4(4)N_5(5);N:N_4(4)P:N_1(1),CH:N_7(7);N:N_7(7)P:N_4(4),CH:NULL;N:N_5(5)P:N_1(1),CH:NULL;N:N_2(2)P:GrandParent(1),CH:N_6(6);N:N_6(6)P:N_2(2),CH:NULL;N:N_3(3)P:GrandParent(1),CH:NULL;");
+    w.acceptSerializedTree(ptr -> serializeTree());
     w.show();
     return a.exec();
 }
