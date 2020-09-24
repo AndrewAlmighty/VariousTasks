@@ -6,3 +6,4 @@ Simple tests are prepared (tests doesn't use any framework) and simple tree rend
 
 2) AzureCommunicator - C++
 Sample app to communicate with Azure. App can send single file to Azure, remove file from azure and print logs which are kept in azure.
+It uses azure-storage-cpp 
