@@ -17,7 +17,7 @@ bool AppConfig::parseAndValidateCmdArgs(int argc, char * argv[])
 		"--logs"
 	};
 
-	for (size_t i = 1; i < argc; ++i)
+	for (int i = 1; i < argc; ++i)
 	{
 		std::string argKey(argv[i]);
 
@@ -48,7 +48,7 @@ bool AppConfig::parseAndValidateCmdArgs(int argc, char * argv[])
 
 	if (args.find("--add") != args.end())
 	{
-		action = Action::AddFile;
+		action = Action::Add;
 		file = args["--add"];
 		args.erase("--add");
 	}
@@ -61,7 +61,7 @@ bool AppConfig::parseAndValidateCmdArgs(int argc, char * argv[])
 			return false;
 		}
 
-		action = Action::DeleteFile;
+		action = Action::Delete;
 		file = args["--delete"];
 		args.erase("--delete");
 	}
@@ -74,7 +74,7 @@ bool AppConfig::parseAndValidateCmdArgs(int argc, char * argv[])
 			return false;
 		}
 
-		action = Action::PrintLogs;
+		action = Action::Print;
 		args.erase("--logs");
 	}
 

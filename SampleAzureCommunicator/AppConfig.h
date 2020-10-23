@@ -8,9 +8,9 @@ public:
 	enum Action
 	{
 		NotDefined = 0,
-		AddFile = 1,
-		DeleteFile = 2,
-		PrintLogs = 3
+		Add = 1,
+		Delete = 2,
+		Print = 3
 	};
 
 	AppConfig() = default;

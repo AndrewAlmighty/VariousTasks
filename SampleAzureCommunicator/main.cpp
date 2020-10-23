@@ -1,8 +1,8 @@
 #include "AppConfig.h"
 #include "AzureCommunicator.h"
-
+#include <iostream>
 int main(int argc, char* argv[])
-{
+{	
 	AppConfig config;
 	if (!config.parseAndValidateCmdArgs(argc, argv))
 		return 0;
